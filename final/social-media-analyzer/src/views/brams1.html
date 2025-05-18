@@ -1,0 +1,2438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BRAMS - AI-Powered Brand Reputation Management System">
+    <meta name="keywords" content="brand reputation, AI, sentiment analysis, social media monitoring">
+    <meta name="author" content="BRAMS">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>BRAMS - AI-Powered Brand Reputation Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <style>
+        /* Global Styles */
+        :root {
+            --primary: #2563EB;
+            --primary-dark: #1E40AF;
+            --primary-light: #60A5FA;
+            --secondary: #10B981;
+            --dark: #1E293B;
+            --light: #F1F5F9;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --success: #10B981;
+            --text-dark: #0F172A;
+            --text-light: #94A3B8;
+            --white: #FFFFFF;
+            --gradient-primary: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);
+            --gradient-secondary: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+            --gradient-modern: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        section {
+            padding: 5rem 0;
+            position: relative;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            background: var(--gradient-modern);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientText 8s ease infinite;
+            background-size: 300% 300%;
+            text-shadow: 0 0 20px rgba(79, 70, 229, 0.2);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            border-radius: 0.5rem;
+            transition: var(--transition);
+            border: none;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: -1;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s ease;
+        }
+
+        .btn:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--white);
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--gradient-secondary);
+            color: var(--white);
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .btn-outline::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            z-index: -1;
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.4s cubic-bezier(0.5, 1.6, 0.4, 0.7);
+        }
+
+        .btn-outline:hover {
+            color: var(--white);
+        }
+
+        .btn-outline:hover::after {
+            transform: scaleY(1);
+        }
+
+        /* Header Styles */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        header.scrolled {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            opacity: 0.3;
+            filter: blur(10px);
+            animation: pulse 2s infinite;
+            z-index: -1;
+        }
+
+        .logo-text {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-left: 0.5rem;
+            position: relative;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding-top: 10rem;
+            padding-bottom: 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, rgba(37, 99, 235, 0) 70%);
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0) 70%);
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+        }
+
+        .hero-text {
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-image {
+            flex: 1;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .hero-image img {
+            width: 100%;
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            transform: rotateY(-5deg) rotateX(5deg);
+            transition: transform 0.5s ease;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .hero-image:hover img {
+            transform: rotateY(0deg) rotateX(0deg);
+        }
+
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 1rem;
+            opacity: 0.2;
+            z-index: -1;
+            transform: translateZ(-10px);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-item {
+            flex: 1;
+            position: relative;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-text {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+
+        /* Features Section */
+        .features {
+            background-color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .features::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(37, 99, 235, 0.03) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 4rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-subtitle {
+            display: inline-block;
+            background: var(--gradient-primary);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-card {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 0;
+            background: var(--gradient-primary);
+            transition: height 0.5s ease;
+            z-index: -1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card:hover::before {
+            height: 100%;
+        }
+
+        .feature-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            color: var(--white);
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(-5deg);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+
+        .feature-card:nth-child(2) .feature-icon,
+        .feature-card:nth-child(4) .feature-icon {
+            background: var(--gradient-secondary);
+        }
+
+        .feature-card:nth-child(2)::before,
+        .feature-card:nth-child(4)::before {
+            background: var(--gradient-secondary);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .feature-card:hover .feature-title {
+            color: var(--primary);
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            background-color: var(--light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .how-it-works::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .steps-container {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            z-index: 2;
+        }
+
+        .steps-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary) 0%, var(--secondary) 100%);
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            color: var(--white);
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .step:hover .step-number {
+            transform: scale(1.1);
+            box-shadow: 0 8px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .step-content {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            width: calc(100% - 80px);
+            margin-left: 2rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .step:hover .step-content {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .step:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .step:nth-child(even) .step-content {
+            margin-left: 0;
+            margin-right: 2rem;
+        }
+
+        .step:nth-child(2) .step-number,
+        .step:nth-child(4) .step-number {
+            background: var(--gradient-secondary);
+        }
+
+        /* Dashboard Preview Section */
+        .dashboard-preview {
+            background-color: var(--dark);
+            color: var(--white);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .dashboard-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.2), transparent 60%),
+                        radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.2), transparent 60%);
+            z-index: 0;
+        }
+
+        .dashboard-preview .section-header h2,
+        .dashboard-preview .section-header p {
+            color: var(--white);
+        }
+
+        .slider-container {
+            position: relative;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+            padding: 20px 0;
+        }
+
+        .slider {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            position: relative;
+            width: 100%;
+        }
+
+        .slide {
+            min-width: 100%;
+            width: 100%;
+            flex: 0 0 100%;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .slide.active {
+            opacity: 1;
+            position: relative;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 350px;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background: white;
+        }
+
+        .slider-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .slider-button:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .slider-button.prev {
+            left: 20px;
+        }
+
+        .slider-button.next {
+            right: 20px;
+        }
+
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 0 20px;
+        }
+
+        .slider-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .slider-dot:hover {
+            transform: scale(1.2);
+        }
+
+        .slider-dot.active {
+            background: rgba(0, 0, 0, 0.8);
+            transform: scale(1.2);
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            background-color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonials::before {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            left: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, rgba(37, 99, 235, 0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .testimonial-slider {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .testimonial-slides {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .testimonial-slide {
+            min-width: 100%;
+            padding: 0 1rem;
+        }
+
+        .testimonial-card {
+            background-color: var(--light);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .testimonial-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, transparent 100%);
+            border-radius: 1rem;
+            z-index: -1;
+        }
+
+        .testimonial-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: var(--text-dark);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .testimonial-text::before,
+        .testimonial-text::after {
+            content: '"';
+            font-size: 4rem;
+            color: var(--primary);
+            opacity: 0.2;
+            position: absolute;
+            font-family: Georgia, serif;
+        }
+
+        .testimonial-text::before {
+            top: -2rem;
+            left: -1rem;
+        }
+
+        .testimonial-text::after {
+            bottom: -4rem;
+            right: -1rem;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid var(--white);
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover .author-image {
+            transform: scale(1.1);
+        }
+
+        .author-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .author-info h4 {
+            margin-bottom: 0.25rem;
+            color: var(--text-dark);
+        }
+
+        .author-info p {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+
+        .testimonial-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .testimonial-dot {
+            width: 12px;
+            height: 12px;
+            background-color: var(--text-light);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .testimonial-dot.active {
+            background-color: var(--primary);
+            transform: scale(1.2);
+        }
+
+        /* Pricing Section */
+        .pricing {
+            background-color: var(--light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing::before {
+            content: '';
+            position: absolute;
+            top: -150px;
+            right: -150px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, rgba(37, 99, 235, 0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .pricing-toggle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .toggle-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            margin: 0 1rem;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--primary);
+            transition: var(--transition);
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: var(--transition);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        .toggle-label.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .pricing-plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pricing-card {
+            background-color: var(--white);
+            padding: 3rem 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, rgba(37, 99, 235, 0.1) 0%, rgba(37, 99, 235, 0.3) 100%);
+            z-index: 0;
+        }
+
+        .pricing-card.popular {
+            transform: scale(1.05);
+            z-index: 2;
+            border: 2px solid var(--primary-light);
+        }
+
+        .pricing-card.popular::after {
+            content: 'Most Popular';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--gradient-primary);
+            color: var(--white);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        .pricing-card.popular:hover {
+            transform: translateY(-15px) scale(1.05);
+        }
+
+        .pricing-header {
+            margin-bottom: 2rem;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .pricing-period {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-feature {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .pricing-feature i {
+            color: var(--success);
+            font-size: 1rem;
+        }
+
+        .pricing-feature.disabled {
+            color: var(--text-light);
+            opacity: 0.7;
+        }
+
+        .pricing-feature.disabled i {
+            color: var(--danger);
+        }
+
+        /* FAQ Section */
+        .faq {
+            background-color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .faq::before {
+            content: '';
+            position: absolute;
+            bottom: -150px;
+            left: -150px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .faq-item {
+            margin-bottom: 1.5rem;
+            background-color: var(--light);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--white);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid transparent;
+        }
+
+        .faq-question h4 {
+            margin-bottom: 0;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .faq-item.active .faq-question {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .faq-item.active .faq-question h4 {
+            color: var(--primary);
+        }
+
+        .faq-icon {
+            color: var(--primary);
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background-color: var(--white);
+        }
+
+        .faq-answer p {
+            padding: 1.5rem;
+            margin: 0;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 1000px;
+        }
+
+        /* CTA Section */
+        .cta {
+            background: var(--gradient-modern);
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="rgba(255, 255, 255, 0.1)" d="M40,90 C40,50 100,20 100,70 C100,120 180,90 140,130 C100,170 140,200 100,150 C60,100 40,130 40,90Z" /></svg>');
+            background-size: 50%;
+            background-repeat: no-repeat;
+            background-position: right bottom;
+            z-index: 0;
+        }
+
+        .cta-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta h2 {
+            color: var(--white);
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .btn-cta {
+            background-color: var(--white);
+            color: var(--primary);
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 2rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-cta-outline {
+            background-color: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: var(--light);
+            padding: 5rem 0 2rem;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-primary);
+            z-index: 1;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-branding {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-left: 0.5rem;
+        }
+
+        .footer-desc {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .footer-heading {
+            font-size: 1.2rem;
+            color: var(--white);
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-heading::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-link {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-link a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-link a:hover {
+            color: var(--primary-light);
+            transform: translateX(5px);
+        }
+
+        .contact-info {
+            list-style: none;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .contact-item i {
+            color: var(--primary-light);
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .copyright {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0) rotateY(-5deg) rotateX(5deg); }
+            50% { transform: translateY(-15px) rotateY(-2deg) rotateX(3deg); }
+            100% { transform: translateY(0) rotateY(-5deg) rotateX(5deg); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.5); opacity: 0.6; }
+            100% { transform: scale(1); opacity: 0.3; }
+        }
+
+        @keyframes gradientText {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Media Queries */
+        @media screen and (max-width: 992px) {
+            h1 {
+                font-size: 2.8rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .hero-content {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .hero-image {
+                order: -1;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            .step {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 3rem;
+            }
+
+            .step:nth-child(even) {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .step-content {
+                width: 100%;
+                margin-left: 0;
+                margin-top: 1rem;
+            }
+
+            .step:nth-child(even) .step-content {
+                margin-right: 0;
+            }
+
+            .steps-line {
+                display: none;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .navbar {
+                position: relative;
+            }
+
+            .nav-links {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                background-color: var(--white);
+                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+                padding: 2rem;
+                gap: 1.5rem;
+                transform: translateY(-150%);
+                transition: all 0.3s ease;
+                opacity: 0;
+                border-radius: 0 0 1rem 1rem;
+                z-index: 10;
+            }
+
+            .nav-links.active {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            .cta-buttons {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .pricing-card.popular {
+                transform: scale(1);
+            }
+
+            .pricing-card.popular:hover {
+                transform: translateY(-15px);
+            }
+        }
+
+        .carousel, .carousel-item {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .carousel-item {
+            position: relative;
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .carousel-description {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+        }
+
+        .carousel-description h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .carousel-description p {
+            font-size: 0.9rem;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .slide-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .slide:hover .slide-content {
+            transform: translateY(0);
+        }
+
+        .slide-content h4 {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .slide-content p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.4;
+        }
+
+        /* Updated welcome section styles */
+        .welcome-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+            text-align: center;
+            background: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-content {
+            background: linear-gradient(to bottom right, #f8f9fa, #e9ecef);
+            border-radius: 20px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-text {
+            margin-bottom: 2rem;
+        }
+
+        .welcome-section h2 {
+            font-size: 2.5rem;
+            color: #2563EB;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-section p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .welcome-logo-container {
+            width: 100%;
+            max-width: 350px;
+            margin: 1rem auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .welcome-logo {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-content {
+                padding: 2rem;
+            }
+            
+            .welcome-logo-container {
+                max-width: 300px;
+            }
+
+            .welcome-section h2 {
+                font-size: 2rem;
+            }
+
+            .welcome-section p {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-content {
+                padding: 1.5rem;
+            }
+            
+            .welcome-logo-container {
+                max-width: 250px;
+            }
+        }
+
+        /* Main container styles */
+        .main-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: #fff;
+        }
+
+        /* Welcome box styles */
+        .welcome-box {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 20px;
+        }
+
+        /* Content area styles */
+        .welcome-content {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .welcome-text {
+            margin-bottom: 2rem;
+        }
+
+        .welcome-text h2 {
+            color: #2d4373;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-text p {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Logo container styles */
+        .welcome-logo-container {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .welcome-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-content {
+                padding: 1.5rem;
+            }
+
+            .welcome-logo-container {
+                width: 250px;
+                height: 250px;
+            }
+
+            .welcome-text h2 {
+                font-size: 1.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-content {
+                padding: 1rem;
+            }
+
+            .welcome-logo-container {
+                width: 200px;
+                height: 200px;
+            }
+
+            .welcome-text h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        .welcome-section {
+            text-align: center;
+            padding: 40px;
+            background: #fff;
+        }
+
+        .welcome-text {
+            margin-bottom: 30px;
+        }
+
+        .welcome-text h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-text p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .welcome-logo {
+            width: 400px;
+            height: 400px;
+            display: block;
+            margin: 0 auto;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-logo {
+                width: 300px;
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-logo {
+                width: 250px;
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header role="banner">
+        <div class="container">
+            <nav class="navbar" role="navigation" aria-label="Main navigation">
+                <a href="#" class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span class="logo-text">BRAMS</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#" aria-label="Home">Home</a></li>
+                    <li><a href="#features" aria-label="Features">Features</a></li>
+                    <li><a href="#how-it-works" aria-label="How It Works">How It Works</a></li>
+                    <li><a href="#faq" aria-label="FAQ">FAQ</a></li>
+                </ul>
+                <div class="cta-buttons">
+                    <a href="home.html" class="btn btn-outline" aria-label="Login">Login</a>
+                    <a href="http://localhost:8501" class="btn btn-primary" aria-label="Get Started">Get Started</a>
+                </div>
+                <button class="mobile-menu-btn" aria-label="Toggle mobile menu" type="button">
+                    <i class="fas fa-bars" aria-hidden="true"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main role="main">
+        <!-- Hero Section -->
+        <section class="hero" aria-label="Hero section">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1>AI-Powered Brand Reputation Management</h1>
+                        <p>Protect and enhance your brand's online presence with real-time monitoring, smart sentiment analysis, and autonomous response capabilities.</p>
+                        <div class="cta-buttons">
+                            <a href="http://localhost:8501" class="btn btn-primary">Get Started</a>
+                            <a href="Recording 2025-04-09 113557.mp4" class="btn btn-outline">Watch Demo</a>
+                        </div>
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">95%</div>
+                                <div class="stat-text">Response Time Reduction</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">80%</div>
+                                <div class="stat-text">Crisis Prevention</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">70%</div>
+                                <div class="stat-text">Cost Reduction</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <img src="1.png" alt="BRAMS Dashboard Preview">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features" aria-label="Features section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-subtitle">Features</span>
+                    <h2>Why Choose BRAMS?</h2>
+                    <p>Our AI-powered platform offers comprehensive brand reputation management with these powerful features.</p>
+                </div>
+                <div class="features-grid">
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="feature-title">Smart Sentiment Analysis</h3>
+                        <p>Go beyond basic positive/negative classification with AI that understands context, sarcasm, and cultural nuances.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-virus"></i>
+                        </div>
+                        <h3 class="feature-title">Predictive Crisis Prevention</h3>
+                        <p>Identify potential PR issues before they escalate by analyzing patterns and early warning signs across all channels.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3 class="feature-title">Autonomous Response</h3>
+                        <p>Generate appropriate responses in real-time while maintaining your brand voice and escalating when human intervention is needed.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="feature-title">Comprehensive Analytics</h3>
+                        <p>Gain valuable insights with customizable dashboards and reports that track your brand's reputation over time.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3 class="feature-title">Multi-Platform Integration</h3>
+                        <p>Seamlessly connect with all major social media platforms, review sites, and news sources through our powerful API.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="how-it-works" aria-label="How it works section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-subtitle">Process</span>
+                    <h2>How BRAMS Works</h2>
+                    <p>Our intelligent system follows a methodical approach to protect and enhance your brand reputation.</p>
+                </div>
+                <div class="steps-container">
+                    <div class="steps-line"></div>
+                    <div class="step">
+                        
+                        
+                    </div>
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>AI-Powered Analysis</h3>
+                            <p>Our advanced AI analyzes each mention to understand sentiment, context, and potential impact, going beyond simple keyword tracking to truly understand what people are saying.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>Threat Detection</h3>
+                            <p>The system identifies potential reputation threats by recognizing patterns that might lead to PR crises, allowing you to address issues before they escalate.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Smart Response Generation</h3>
+                            <p>For routine matters, BRAMS can automatically generate appropriate responses that maintain your brand voice, while escalating more complex issues to your team.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h3>Continuous Learning</h3>
+                            <p>The system learns from each interaction and improves over time, adapting to your brand's specific needs and the changing digital landscape.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Example Section -->
+        <section class="real-time-example">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-subtitle">Real-Time Example</span>
+                    <h2>How BRAMS Protects a New Phone Launch</h2>
+                    <p>See how BRAMS monitors, analyzes of a newly launched phone in real-time.</p>
+                </div>
+                <div class="example-steps">
+                    <div class="example-step">
+                        <div class="example-step-number">1</div>
+                        <div class="example-step-content">
+                            <h3>Real-Time Monitoring</h3>
+                            <p>As soon as the phone is launched, BRAMS starts monitoring social media platforms, news websites, and review sites for any mentions of the phone. It tracks hashtags, keywords, and even images related to the product.</p>
+                        </div>
+                    </div>
+                    <div class="example-step">
+                        <div class="example-step-number">2</div>
+                        <div class="example-step-content">
+                            <h3>Sentiment Analysis</h3>
+                            <p>BRAMS analyzes the sentiment of each mention, identifying positive, negative, and neutral comments. It detects subtle emotions like frustration or excitement, and even understands sarcasm or cultural nuances in different languages.</p>
+                        </div>
+                    </div>
+                    <div class="example-step">
+                        <div class="example-step-number">3</div>
+                        <div class="example-step-content">
+                            <h3>Crisis Detection</h3>
+                            <p>If a negative review or complaint starts gaining traction, BRAMS identifies it as a potential crisis. It analyzes patterns from past incidents to predict how the issue might escalate and alerts the PR team immediately.</p>
+                        </div>
+                    </div>
+                    <div class="example-step">
+                        <div class="example-step-number">4</div>
+                        <div class="example-step-content">
+                            <h3>Autonomous Response</h3>
+                            <p>For common issues like delivery delays or minor complaints, BRAMS generates an appropriate response in the brand's voice. For more serious issues, it escalates the matter to the human team.</p>
+                        </div>
+                    </div>
+                    <div class="example-step">
+                        <div class="example-step-number">5</div>
+                        <div class="example-step-content">
+                            <h3>Continuous Improvement</h3>
+                            <p>BRAMS learns from each interaction, improving its response strategies over time. It tracks the effectiveness of its responses and adjusts its approach to better protect the brand's reputation.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Preview Section -->
+        <section class="dashboard-preview" aria-label="Dashboard preview section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-subtitle">Interface</span>
+                    <h2>Powerful Dashboard, Intuitive Design</h2>
+                    <p>Get a comprehensive view of your brand's online reputation with our easy-to-use dashboard.</p>
+                </div>
+                
+                <!-- New Carousel Structure -->
+                <div class="slider-container">
+                    <div class="slider">
+                        <div class="slide">
+                            <img src="1.png" alt="Brand Overview Dashboard - Comprehensive view of brand metrics" width="800" height="450" loading="lazy">
+                            <div class="slide-content">
+                                <h4>Brand Overview Dashboard</h4>
+                                <p>Comprehensive view of brand metrics including total mentions (344), neutral sentiment (30%), and negative sentiment (7%). Overall brand score: 44/100.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="2.png" alt="Sentiment Analysis Dashboard - Detailed breakdown of sentiment trends" width="800" height="450" loading="lazy">
+                            <div class="slide-content">
+                                <h4>Analyzing Brand Reputation</h4>
+                                <p>Detailed breakdown of sentiment analysis showing positive, negative, and neutral mentions with trend analysis over time.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="3.png" alt="Platform Distribution">
+                            <div class="slide-content">
+                                <h4>Analyzing issues and generating recommendations</h4>
+                                <p>Analysis of brand mentions across different social media platforms with comparative metrics.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="4.png" alt="Sentiment Trend Analysis">
+                            <div class="slide-content">
+                                <h4>Sentiment Trend Analysis</h4>
+                                <p>Interactive visualization showing sentiment trends over time, with color-coded lines representing positive (green), neutral (gray), and negative (red) sentiment percentages. The graph includes data points that can be hovered over for detailed metrics at specific timestamps.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="5.png" alt="Keyword Analysis">
+                            <div class="slide-content">
+                                <h4>Pr Crisis Detection</h4>
+                                <p>Word cloud and frequency analysis of most discussed topics and keywords related to the brand.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="6.png" alt="Engagement Metrics">
+                            <div class="slide-content">
+                                <h4>Fake Conntent Detection</h4>
+                                <p>Detailed metrics on user engagement including likes, shares, comments, and interaction rates.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="7.png" alt="Geographic Distribution">
+                            <div class="slide-content">
+                                <h4>Displaying Promotional Content Detection And Graphs </h4>
+                                <p>Heat map showing brand mention distribution across different geographic locations.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="8.png" alt="Competitor Analysis">
+                            <div class="slide-content">
+                                <h4>Detecting issues</h4>
+                                <p>Side-by-side comparison of brand performance against key competitors in the market.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="9.png" alt="Crisis Detection">
+                            <div class="slide-content">
+                                <h4>Displaying Detected Issues Posts</h4>
+                                <p>Real-time monitoring of potential reputation threats and negative sentiment spikes.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="10.png" alt="Influencer Analysis">
+                            <div class="slide-content">
+                                <h4>Recommended Actions</h4>
+                                <p>Analysis of key influencers and their impact on brand perception and reach.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="11.png" alt="Content Performance">
+                            <div class="slide-content">
+                                <h4>Displaying Response Templates</h4>
+                                <p>Analytics on different types of content and their engagement performance.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="12.png" alt="Audience Demographics">
+                            <div class="slide-content">
+                                <h4>Displaying Reviews On Twitter</h4>
+                                <p>Detailed breakdown of audience characteristics including age, gender, and interests.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="13.png" alt="Response Analytics">
+                            <div class="slide-content">
+                                <h4>Displaying Reviews On Reddit</h4>
+                                <p>Metrics on response times and effectiveness of customer engagement.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="14.png" alt="Campaign Tracking">
+                            <div class="slide-content">
+                                <h4>Displaying Reviews On Youtube</h4>
+                                <p>Real-time monitoring of marketing campaign performance and impact.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="15.png" alt="Sentiment Details">
+                            <div class="slide-content">
+                                <h4>Displaying Reviews On Instagram</h4>
+                                <p>In-depth analysis of sentiment patterns and emotional responses to brand content.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="16.png" alt="Custom Reports">
+                            <div class="slide-content">
+                                <h4>Displaying Reviews On News</h4>
+                                <p>Tool for creating customized reports with selected metrics and insights.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="17.png" alt="Alert System">
+                            <div class="slide-content">
+                                <h4>Filtering Options</h4>
+                                <p>Customizable alert system for monitoring specific keywords and sentiment changes.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="18.png" alt="Historical Analysis">
+                            <div class="slide-content">
+                                <h4>Filtering According To Your Sentiment</h4>
+                                <p>Long-term trend analysis and historical performance comparison.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="19.png" alt="API Integration">
+                            <div class="slide-content">
+                                <h4>Export Report Of Your Brand</h4>
+                                <p>Overview of connected platforms and data integration status.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="20.png" alt="Automated Responses">
+                            <div class="slide-content">
+                                <h4>Downloading Report</h4>
+                                <p>AI-powered system for managing and automating responses to common queries.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <img src="21.png" alt="ROI Tracking">
+                            <div class="slide-content">
+                                <h4>View Report</h4>
+                                <p>Comprehensive tracking of return on investment for social media activities.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="slider-button prev" aria-label="Previous slide" type="button">❮</button>
+                    <button class="slider-button next" aria-label="Next slide" type="button">❯</button>
+                </div>
+            </div>
+        </section>
+
+        
+            <!-- FAQ Section -->
+            <section id="faq" class="faq" aria-label="Frequently asked questions">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="section-subtitle">FAQ</span>
+                        <h2>Frequently Asked Questions</h2>
+                        <p>Find answers to common questions about BRAMS and how it can help your brand.</p>
+                    </div>
+                    <div class="faq-container">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h4>What platforms does BRAMS support?</h4>
+                                <i class="fas fa-plus faq-icon"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>BRAMS supports all major social media platforms, including Twitter, Facebook, Instagram, Reddit and YouTube. It also monitors news websites, blogs, review platforms like Trustpilot and Yelp, and online forums.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h4>How does BRAMS handle multiple languages?</h4>
+                                <i class="fas fa-plus faq-icon"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>BRAMS uses advanced Natural Language Processing (NLP) to understand and analyze content in over 50 languages. It can detect cultural nuances, regional variations, and even sarcasm or humor in different languages.</p>
+                            </div>
+                        </div>
+                        
+                        
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h4>What kind of support is available?</h4>
+                                <i class="fas fa-plus faq-icon"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>We offer 24/7 customer support via email, chat, and phone. Enterprise clients also have access to a dedicated account manager and priority support.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        
+            <!-- CTA Section -->
+            <section class="cta" aria-label="Call to action section">
+                <div class="container">
+                    <div class="cta-container">
+                        <h2>Ready to Protect Your Brand?</h2>
+                        <p>Join thousands of businesses that trust BRAMS to manage their online reputation. Get started today and see the difference AI-powered reputation management can make.</p>
+                        <div class="cta-buttons">
+                            <a href="http://localhost:8501" class="btn btn-cta">Get Started</a>
+                           
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer role="contentinfo">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-branding">
+                        <div class="footer-logo">
+                            <i class="fas fa-shield-alt"></i>
+                            <span class="footer-logo-text">BRAMS</span>
+                        </div>
+                        <p class="footer-desc">AI-powered brand reputation management for the modern digital landscape.</p>
+                        <div class="social-links">
+                            <a href="#" class="social-link" aria-label="Twitter" rel="noopener"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link" aria-label="LinkedIn" rel="noopener"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="social-link" aria-label="Facebook" rel="noopener"><i class="fab fa-facebook"></i></a>
+                            <a href="#" class="social-link" aria-label="Instagram" rel="noopener"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="footer-heading">Quick Links</h4>
+                        <ul class="footer-links">
+                            <li class="footer-link"><a href="#">Home</a></li>
+                            <li class="footer-link"><a href="#features">Features</a></li>
+                            <li class="footer-link"><a href="#how-it-works">How It Works</a></li>
+                            <li class="footer-link"><a href="#pricing">Pricing</a></li>
+                            <li class="footer-link"><a href="#faq">FAQ</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="footer-heading">Legal</h4>
+                        <ul class="footer-links">
+                            <li class="footer-link"><a href="#">Privacy Policy</a></li>
+                            <li class="footer-link"><a href="#">Terms of Service</a></li>
+                            <li class="footer-link"><a href="#">Cookie Policy</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="footer-heading">Contact Us</h4>
+                        <ul class="contact-info">
+                            <li class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Unisys, Bangalore, 560035</span>
+                            </li>
+                            <li class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>+91 6305722769</span>
+                            </li>
+                            <li class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>support@brams.com</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p class="copyright">&copy; 2023 BRAMS. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    
+        <script>
+            // Add nonce attribute for script security
+            document.addEventListener('DOMContentLoaded', () => {
+                const slider = document.querySelector('.slider');
+                const slides = document.querySelectorAll('.slide');
+                const prevButton = document.querySelector('.slider-button.prev');
+                const nextButton = document.querySelector('.slider-button.next');
+                const sliderContainer = document.querySelector('.slider-container');
+                
+                let currentSlide = 0;
+                const totalSlides = slides.length;
+
+                // Set initial active slide
+                slides[0].classList.add('active');
+                
+                function updateSlider(direction) {
+                    // Remove active class from current slide
+                    slides[currentSlide].classList.remove('active');
+                    
+                    // Update current slide index
+                    if (direction === 'next') {
+                        currentSlide = (currentSlide + 1) % totalSlides;
+                    } else {
+                        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                    }
+                    
+                    // Add active class to new slide
+                    slides[currentSlide].classList.add('active');
+                    updateDots();
+                }
+                
+                // Create dots navigation
+                const dotsContainer = document.createElement('div');
+                dotsContainer.className = 'slider-dots';
+                
+                for (let i = 0; i < totalSlides; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'slider-dot' + (i === 0 ? ' active' : '');
+                    dot.addEventListener('click', () => {
+                        slides[currentSlide].classList.remove('active');
+                        currentSlide = i;
+                        slides[currentSlide].classList.add('active');
+                        updateDots();
+                    });
+                    dotsContainer.appendChild(dot);
+                }
+                sliderContainer.appendChild(dotsContainer);
+                
+                const dots = document.querySelectorAll('.slider-dot');
+                
+                function updateDots() {
+                    dots.forEach((dot, index) => {
+                        dot.classList.toggle('active', index === currentSlide);
+                    });
+                }
+                
+                // Event Listeners
+                nextButton.addEventListener('click', () => updateSlider('next'));
+                prevButton.addEventListener('click', () => updateSlider('prev'));
+                
+                // Auto-play
+                let autoPlay = setInterval(() => updateSlider('next'), 5000);
+                
+                // Pause on hover
+                sliderContainer.addEventListener('mouseenter', () => {
+                    clearInterval(autoPlay);
+                });
+                
+                sliderContainer.addEventListener('mouseleave', () => {
+                    autoPlay = setInterval(() => updateSlider('next'), 5000);
+                });
+                
+                // Touch events for mobile
+                let touchStartX = 0;
+                let touchEndX = 0;
+                
+                slider.addEventListener('touchstart', e => {
+                    touchStartX = e.changedTouches[0].screenX;
+                    clearInterval(autoPlay);
+                });
+                
+                slider.addEventListener('touchend', e => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    if (touchStartX - touchEndX > 50) {
+                        updateSlider('next');
+                    } else if (touchEndX - touchStartX > 50) {
+                        updateSlider('prev');
+                    }
+                    autoPlay = setInterval(() => updateSlider('next'), 5000);
+                });
+                
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') {
+                        updateSlider('prev');
+                    } else if (e.key === 'ArrowRight') {
+                        updateSlider('next');
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            // Add nonce attribute for script security
+            document.addEventListener('DOMContentLoaded', () => {
+                // Existing FAQ code
+            });
+        </script>
+
+        <script>
+            // FAQ Toggle Functionality
+            document.addEventListener('DOMContentLoaded', () => {
+                const faqItems = document.querySelectorAll('.faq-item');
+                
+                faqItems.forEach(item => {
+                    const question = item.querySelector('.faq-question');
+                    
+                    question.addEventListener('click', () => {
+                        // Toggle active class on the FAQ item
+                        item.classList.toggle('active');
+                        
+                        // Get the answer element
+                        const answer = item.querySelector('.faq-answer');
+                        
+                        // Toggle the answer visibility
+                        if (item.classList.contains('active')) {
+                            answer.style.maxHeight = answer.scrollHeight + 'px';
+                        } else {
+                            answer.style.maxHeight = '0';
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>
+
